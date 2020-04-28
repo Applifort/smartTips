@@ -1,0 +1,151 @@
+Artur Gabitov:house_with_garden:  39 minutes ago
+Там много пока заглушек, так как нет бэка
+
+Ramil Musaev:house:  38 minutes ago
+@Artur Gabitov с тобой не делились боевыми проектами чтобы примеры смотреть?
+
+Artur Gabitov:house_with_garden:  37 minutes ago
+Нет)
+
+Artur Gabitov:house_with_garden:  37 minutes ago
+Все это мой первый опыт по докам реакта
+
+Ramil Musaev:house:  37 minutes ago
+а про стореон откуда узнал?
+
+Ramil Musaev:house:  37 minutes ago
+почему его выбрали а не редакс
+
+Artur Gabitov:house_with_garden:  37 minutes ago
+А он был уже
+
+Ramil Musaev:house:  36 minutes ago
+так приложение новое, как оно могло быть уже там?
+
+Artur Gabitov:house_with_garden:  36 minutes ago
+Ну не совсем, какой то фронт уже был
+
+Ramil Musaev:house:  35 minutes ago
+я сам storeon пробовал на одном проекте, он в целом ок, но давай лучше будем тут использовать то, к чему привыкло большинство, сейчас redux toolkit вроде как все используют
+
+Artur Gabitov:house_with_garden:  35 minutes ago
+Как он там оказался не могу сказать, я не с самого начала проекта тут)
+
+Artur Gabitov:house_with_garden:  35 minutes ago
+Ок, поменяю на редакс
+
+Ramil Musaev:house:  34 minutes ago
+Дерни меня как запушишь реализованный контейнер с каррент юзером, да или вообще любой контейнер, скорее всего сразу дам рекомендации как сделать лучше.
+
+Artur Gabitov:house_with_garden:  32 minutes ago
+Ну там вроде обернуто в каррент юзера. Пока правда строкой. Или это не то? (edited) 
+
+Artur Gabitov:house_with_garden:  31 minutes ago
+Если карент юзера нет он редиректит на сайн ин страничку (edited) 
+
+Ramil Musaev:house:  29 minutes ago
+ну да я вижу что каррент юзер сейчас это просто строка
+
+Ramil Musaev:house:  29 minutes ago
+тем не менее я вижу вот такую строку в КОМПОНЕНТЕ:
+const { dispatch, courses } = useStoreon('courses');
+
+Ramil Musaev:house:  29 minutes ago
+Компонент ничего не должен знать про редакс, он получает данные сверху
+
+Ramil Musaev:house:  27 minutes ago
+Я про то как организовывать компоненты / контейнеры / страницы / модули хранилища не рассказывал?
+@Artur Gabitov
+
+Artur Gabitov:house_with_garden:  26 minutes ago
+Нет
+
+Ramil Musaev:house:  26 minutes ago
+Опишу здесь сейчас идейно как это должно выглядеть
+:eyes:
+1
+
+
+Ramil Musaev:house:  17 minutes ago
+Корень приложения рендерит Router
+Router в зависимости от принятого currentUser разруливает какой свитч ему рендерить
+Каждый роут в компоненте Router рендерит страницы, организуй страницы в папке pages  и организуй там иерархию вложенных страниц, в идеале эта иерархия будет отражать структуру api , то есть для api/v1/users/1/courses  будет роут приложения /users/1/courses , файл со страницей pages/Users/Show/Courses/index.js
+Page это реакт компонент, который связывает контейнеры и глупые компоненты, то есть вызывает const { courses, loadCourses } = useCourses() . Прокидывает эти данные из стора глупым компонентам. Сам `useCourses` это функция, которую экспортирует контейнер.  Страница инициирует загрузку курсов через useEffect
+Полученные курсы нужно прокидывать в глупые компоненты на странице <MyCoursesList items={courses} />
+ Контейнеры лежат в папке containers , для курсов это будет UsersCoursesContainer
+Компоненты можно организовывать в нашем случае так components/Users/Courses , вкладывать курсы в юзера в данном случае имеет смысл если дизайн подразумевает специфику отражения эти курсов в контексте юзера, если такой специфики нет то путь будет components/Courses
+
+Artur Gabitov:house_with_garden:  14 minutes ago
+Тоесть есть контейнеры которые имеют доступ к стору и глупые компоненты которые получают данные сверху?
+
+Ramil Musaev:house:  13 minutes ago
+да
+
+Artur Gabitov:house_with_garden:  13 minutes ago
+а еще есть Page который умный компонент?
+
+Alexander Shcherbachenko:house_with_garden:  13 minutes ago
+pages/Users/Show/Courses/index.js выглядит как офигенный подход. Жаль что fifth asset не так)
+
+Ramil Musaev:house:  13 minutes ago
+Саня я после фифасета до этого допер)
+:grinning:
+1
+
+
+Ramil Musaev:house:  12 minutes ago
+@Artur Gabitov page это супер умный компонент, он связывает независимое число контейнеров с независимым числом компонентов
+
+Ramil Musaev:house:  12 minutes ago
+Page полностью отражает структуры страницы, и лучше ее держать прозрачной
+
+Ramil Musaev:house:  12 minutes ago
+От хедера до футера.
+
+Ramil Musaev:house:  11 minutes ago
+Повторяющие куски страниц (хедер, футер) нужно организовывать в лайауты, это тоже глупый компонент по сути
+
+Ramil Musaev:house:  11 minutes ago
+<Layout><CoursesPage /></Layout>
+
+Artem Musalitin:house_with_garden:  10 minutes ago
+@Ramil Musaev заебень страничку с этими поинтами чтобы просто килдать ссылку потом :slightly_smiling_face:
+
+Artem Musalitin:house_with_garden:  10 minutes ago
+где нибудь вот тут например https://gitlab.com/dualbootpartners/internal/codestyle/-/tree/master/frontend (edited) 
+
+Ramil Musaev:house:  9 minutes ago
+у меня доступа туда нет че-то
+
+Artur Gabitov:house_with_garden:  9 minutes ago
+по лайаутам не догнал. В смысле просто переместить их в лайауты?
+
+Artur Gabitov:house_with_garden:  9 minutes ago
+а если логика есть в хедере?
+
+Ramil Musaev:house:  8 minutes ago
+я бы не копипастил это туда в таком виде, нужно еще некоторые вещи формализовать прежде чем куда-то опубликовывать
+
+Ramil Musaev:house:  8 minutes ago
+@Artur Gabitov можешь привести пример такой логики?
+
+Artur Gabitov:house_with_garden:  8 minutes ago
+ну у нас например там юзер и типа уведомляшки
+
+Ramil Musaev:house:  7 minutes ago
+в лайаут прокидываются юзер и уведомляшки
+
+Ramil Musaev:house:  7 minutes ago
+со страницы
+
+Artur Gabitov:house_with_garden:  7 minutes ago
+тоесть передаем данными туда. По сути это теже глупые компоненты, просто лежат отдельно?
+
+Ramil Musaev:house:  6 minutes ago
+лайауты я храню в components/Layouts/TwoColumns/index.js
+
+Artur Gabitov:house_with_garden:  6 minutes ago
+Аа.. ок
+
+Ramil Musaev:house:  6 minutes ago
+да, лайаут это тоже должен быть глупый компонент, если не получается его сделать глупым то дай знать, обмозгуем
